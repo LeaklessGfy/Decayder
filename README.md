@@ -7,9 +7,9 @@ Decayder is the FurezLegacy project on Electron
 
 ##Binary
 
-##Intall
-
 ##Requirements
+
+##Install
 
 ##Build
 
