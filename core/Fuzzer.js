@@ -1,27 +1,54 @@
 var axios = require('axios')
 
-var Fuzzer = {
-	url: null,
-	port: null,
-	header: null,
+function Fuzzer(url, port, header, method) {
+	this.url = url;
+	this.port = port;
+	this.header = header;
+	this.method = method;
+}
 
-	init: function(url, port, header) {
-		Fuzzer.url = url;
-		Fuzzer.port = port;
-		Fuzzer.header = header;
-	},
+Fuzzer.prototype.getResponse = function getResponse() {
+	let response;
 
-	send: function(request) {
-		axios({
-		  method: 'get',
-		  url: Fuzzer.url,
-		  headers: {Fuzzer.header : request}
-		}).then(Fuzzer.handleResult);
-	},
-
-	handleResult: function(result) {
-		console.log(result);
+	switch(method) {
+		case 0: 
+			response = "header('" + Fuzzer.header + ":' . $r);";
+			break;
+		case 1:
+			response = "exit(echo($r));";
+			break;
 	}
+
+	return response;
+}
+
+Fuzzer.prototype.send = function send(request, onSuccess, onFail) {
+	let success = Fuzzer.handleResult;
+	let fail = Fuzzer.handleError;
+
+	if(typeof onSuccess == "function") {
+		success = onSuccess;
+	}
+
+	if(typeof onError == "function") {
+		fail = onFail;
+	}
+
+	request = request + Fuzzer.getResponse();
+
+	axios({
+	  	method: 'get',
+	 	url: Fuzzer.url,
+	  	headers: {Fuzzer.header : request}
+	})
+	.then(success)
+	.catch(fail);
+}
+
+Fuzzer.prototype.handleResult = function handleResult(result) {
+}
+
+Fuzzer.prototype.handleError = function handleError(error) {
 }
 
 module.exports = Fuzzer;

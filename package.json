@@ -1,28 +1,30 @@
 {
-  "name": "electron-quick-start",
+  "name": "Decayder",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "The FurezLegacy project on Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron/electron-quick-start.git"
+    "url": "git+https://github.com/LeaklessGfy/Decayder.git"
   },
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial"
+    "Furez",
+    "Decayder",
+    "Remote",
+    "Backdoor"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "LeaklessGfy & Kamikaze.0x36",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron/electron-quick-start/issues"
+    "url": "https://github.com/LeaklessGfy/Decayder/issues"
   },
-  "homepage": "https://github.com/electron/electron-quick-start#readme",
+  "homepage": "https://github.com/LeaklessGfy/Decayder",
   "devDependencies": {
-    "electron-prebuilt": "^1.2.0"
+    "electron-prebuilt": "^1.2.0",
+    "axios": "0.12.0"
   }
 }
