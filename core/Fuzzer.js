@@ -7,7 +7,7 @@ function Fuzzer(url, port, header, method) {
 	this.method = method;
 }
 
-Fuzzer.prototype.getResponse = function getResponse() {
+Fuzzer.prototype.getHandleback = function getHandleback() {
 	let response;
 
 	switch(method) {
@@ -25,6 +25,7 @@ Fuzzer.prototype.getResponse = function getResponse() {
 Fuzzer.prototype.send = function send(request, onSuccess, onFail) {
 	let success = Fuzzer.handleResult;
 	let fail = Fuzzer.handleError;
+	let headers = {};
 
 	if(typeof onSuccess == "function") {
 		success = onSuccess;
@@ -34,15 +35,14 @@ Fuzzer.prototype.send = function send(request, onSuccess, onFail) {
 		fail = onFail;
 	}
 
-	request = request + Fuzzer.getResponse();
+	request = request + Fuzzer.getHandleback();
+	headers[Fuzzer.header] = request;
 
 	axios({
 	  	method: 'get',
 	 	url: Fuzzer.url,
-	  	headers: {Fuzzer.header : request}
-	})
-	.then(success)
-	.catch(fail);
+	  	headers: headers
+	}).then(success).catch(fail);
 }
 
 Fuzzer.prototype.handleResult = function handleResult(result) {

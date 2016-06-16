@@ -12,7 +12,7 @@ CMD.prototype.getSystemCmd = function getSystemCmd(cmd, r) {
 }
 
 CMD.prototype.getShellExecCmd = function getShellExecCmd(cmd, r) {
-	return "$" + r + "=shell_exec('" + cmd "');";
+	return "$" + r + "=shell_exec('" + cmd + "');";
 }
 
 CMD.prototype.createCmd = function createCmd(cmd, r) {

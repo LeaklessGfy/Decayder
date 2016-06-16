@@ -25,6 +25,7 @@
   "homepage": "https://github.com/LeaklessGfy/Decayder",
   "devDependencies": {
     "electron-prebuilt": "^1.2.0",
-    "axios": "0.12.0"
+    "axios": "0.12.0",
+    "gator": "1.2.4"
   }
 }

@@ -1,10 +1,77 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Decayder</title>
+  <meta charset="UTF-8">
+  <title>Decayder</title>
+  <link rel="stylesheet" href="./res/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./res/css/right-bar.min.css">
+  <style>
+    html, body, .full-height {
+      height: 100%;
+    }
+
+    .no-padding {
+      padding: 0;
+    }
+
+    .main .nav {
+      height: 100%;
+      background: black;
+      color: white;
+    }
+  </style>
+
   </head>
-  <body>
+
+  <body class="main">
+    <div class="container-fluid full-height">
+      <div class="row full-height">
+
+        <div class="col-md-4 col-xs-2 full-height no-padding">
+          <nav class="nav navbar-inverse navbar-fixed-side">
+            <div class="container">
+              <div class="navbar-header">
+                <a class="navbar-brand" href="#">Brand</a>
+              </div>
+
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                  <li class="active">
+                    <a href="#">Finder <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li>
+                    <a href="#">Raw cmd</a>
+                  </li>
+                  <li>
+                    <a href="#">Raw PHP</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        <div class="col-md-8 col-xs-10">
+          <header>
+            <div class="row">
+              <div class="col-sm-10">
+                <form>
+                  <div class="form-group">
+                    <input class="form-control" type="text">
+                  </div>
+                </form>
+              </div>
+
+              <div class="col-sm-2">
+                <button class="btn btn-success">Start</button>
+              </div>
+            </div>
+          </header>    
+        </div>
+
+      </div>
+    </div>
+
     We are using node <script>document.write(process.versions.node)</script>,
     Chromium <script>document.write(process.versions.chrome)</script>,
     and Electron <script>document.write(process.versions.electron)</script>.
