@@ -9,10 +9,20 @@ let Workers = require('./src/Workers');
 Workers.menuAction("setup");
 
 /*
- * Event Listener
+ * APP Event Listener
  */
-gator(document).on('click', '#setup-submit', function(e) {
-    e.preventDefault();
+ logger.on('logging', function (transport, level, msg, meta) {
+    // [msg] and [meta] have now been logged at [level] to [transport] 
+    console.log(level);
+    console.log(msg);
+    console.log(transport);
+  });
+
+/*
+ * DOM Event Listener
+ */
+ gator(document).on('click', '#setup-submit', function(e) {
+	e.preventDefault();
     let form = document.getElementById("setup-form");
     form = new FormData(form);
     $s = Workers.checkSetup(form);
@@ -29,13 +39,13 @@ gator(document).on('click', '#setup-submit', function(e) {
 		let r = CMD.listDir("./");
 		Fuzzer.send(r);
 	}
-});
+ });
 
-gator(document).on('click', '#setup-generate-decoy', function(e) {
+ gator(document).on('click', '#setup-generate-decoy', function(e) {
 	e.preventDefault();
 	alert("Will generate php file");
-});
+ });
 
-gator(document).on('click', '.menu-item', function(e) {
+ gator(document).on('click', '.menu-item', function(e) {
 	Workers.menuAction(this.dataset.item);
-});
+ });

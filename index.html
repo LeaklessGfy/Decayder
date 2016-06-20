@@ -57,6 +57,14 @@
   </body>
 
   <script>
+    const winston = require('winston');
+    var logger = new (winston.Logger)({
+      transports: [
+        new (winston.transports.Console)(),
+        new (winston.transports.File)({ json: true, prettyPrint: true, filename: 'log.log' })
+      ]
+    });
+
     const axios = require('axios');
     require('./renderer.js')
   </script>

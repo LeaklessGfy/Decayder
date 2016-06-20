@@ -50,6 +50,7 @@ CMD.prototype.listDir = function listDir(dir) {
 	lsFile = this.createCmd(lsFile, "fi");
 
 	ls = lsFolder + lsFile + "$r=json_encode(array($fo, $fi));";
+	logger.log("info", "Build new request: %s", ls);
 
 	return ls;
 }

@@ -74,9 +74,10 @@ Fuzzer.prototype.forgeRequest = function forgeRequest(r) {
 			request.headers[this.parameter] = r;
 			break;
 		case 3: //Cookie
-			var j = ApiCaller.jar(); 
-			var cookie = ApiCaller.cookie(this.parameter + '=' + encodeURIComponent(r));
+			let j = ApiCaller.jar(); 
+			let cookie = ApiCaller.cookie(this.parameter + '=' + encodeURIComponent(r));
 			j.setCookie(cookie, this.host);
+			
 			request.jar = j;
 			break;
 	}
@@ -85,10 +86,10 @@ Fuzzer.prototype.forgeRequest = function forgeRequest(r) {
 }
 
 Fuzzer.prototype.send = function send(r, onSuccess, onError) {
-	var that = this; //For callbacks
+	var self = this;
 	this.request = this.forgeRequest(r);
 
-	console.log(this.request);
+	logger.log("info", "Final request: %j", this.request, {});
 
 	if(typeof onSuccess == "function") {
 		this.callbacks.onSuccess = onSuccess;
@@ -100,27 +101,26 @@ Fuzzer.prototype.send = function send(r, onSuccess, onError) {
 
 	ApiCaller(this.request, function(error, response, body) {
 		if(!error && response.statusCode == 200) {
-			return that.callbacks.onSuccess(response, body, that);
+			logger.log("info", "Response(obj): ", response);
+			logger.log("info", "Response(body): ", body);
+
+			if(self.request.jar != {}) {
+				logger.log("info", "Response(cookies): ", self.request.jar.getCookies(self.host));
+			}
+
+			return self.callbacks.onSuccess(response, body, self);
 		}
 
-		return that.callbacks.onError(error, response, body, that);
+		logger.log("error", "Error: %j", error);
+
+		return self.callbacks.onError(error, response, body, self);
 	});
 }
 
 Fuzzer.prototype.handleSuccess = function handleSuccess(response, body, ref) {
-	console.log("RESPONSE => ");
-	console.log(response);
-	console.log("BODY => ");
-	console.log(body);
-
-	var j = ref.request.jar;
-	console.log("COOKIE => ");
-  	var cookies = j.getCookies(ref.host);
-  	console.log(cookies);
 }
 
 Fuzzer.prototype.handleError = function handleError(error, response, body, ref) {
-	console.log(error);
 }
 
 module.exports = Fuzzer;

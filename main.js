@@ -5,7 +5,7 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 800, 
+    width: 1500, 
     height: 600, 
     "web-preferences": {
       "web-security": false
