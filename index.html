@@ -57,15 +57,28 @@
   </body>
 
   <script>
+    const gator = require('gator');
+    const EventEmitterInterface = require('events');
     const winston = require('winston');
-    var logger = new (winston.Logger)({
+    const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.Console)(),
         new (winston.transports.File)({ json: true, prettyPrint: true, filename: 'log.log' })
       ]
     });
+    const CMDInterface = require('./core/CMD');
+    const FuzzerInterface = require('./core/Fuzzer');
+    const Workers = require('./src/Workers');
 
-    const axios = require('axios');
+    const EventListener = new EventEmitterInterface();
+
+    let CMD = null;
+    let Fuzzer = null;
+
+    logger.on('logging', function (transport, level, msg, meta) {
+      //Handling log interface
+    });
+
     require('./renderer.js')
   </script>
 </html>

@@ -1,22 +1,4 @@
-const gator = require('gator');
-
-let CMDInterface = require('./core/CMD');
-let FuzzerInterface = require('./core/Fuzzer');
-let CMD = null;
-let Fuzzer = null;
-
-let Workers = require('./src/Workers');
 Workers.menuAction("setup");
-
-/*
- * APP Event Listener
- */
- logger.on('logging', function (transport, level, msg, meta) {
-    // [msg] and [meta] have now been logged at [level] to [transport] 
-    console.log(level);
-    console.log(msg);
-    console.log(transport);
-  });
 
 /*
  * DOM Event Listener
@@ -33,7 +15,7 @@ Workers.menuAction("setup");
 			delete Fuzzer;
 		}
 
-		Fuzzer = new FuzzerInterface($s.host, $s.method, $s.parameter, $s.crypt);
+		Fuzzer = new FuzzerInterface($s);
 		CMD = new CMDInterface($s.shell);
 
 		let r = CMD.listDir("./");
@@ -49,3 +31,9 @@ Workers.menuAction("setup");
  gator(document).on('click', '.menu-item', function(e) {
 	Workers.menuAction(this.dataset.item);
  });
+
+EventListener.on('event', () => {
+  console.log('an event occurred!');
+});
+
+EventListener.emit('event');

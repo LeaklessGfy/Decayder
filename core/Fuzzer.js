@@ -2,19 +2,22 @@ let ApiCaller = require('request');
 let UserAgent = require('random-useragent');
 
 /*
- * @param string Host = target URL
- * @param int Method = Http method for request [0: GET, 1: POST, 2: HEADER, 3: COOKIE]
- * @param string Parameter = Infected parameters
- * @param int Crypt = Is it a crypted request
+ * @param {object} config = configuration of Fuzzer
+ *
+ * @config_param string Host = target URL
+ * @config_param int Method = Http method for request [0: GET, 1: POST, 2: HEADER, 3: COOKIE]
+ * @config_param string Parameter = Infected parameters
+ * @config_param int Crypt = Is it a crypted request
  * 
  * {object} callbacks = Default callbacks methods
  * string httpMethod = Http method for request 
+ * {object} request = current request
  */
-function Fuzzer(host, method, parameter, crypt) {
-	this.host = host;
-	this.method = parseInt(method);
-	this.parameter = parameter;
-	this.crypt = crypt;
+function Fuzzer(config) {
+	this.host = config.host;
+	this.method = parseInt(config.method);
+	this.parameter = config.parameter || "Dec";
+	this.crypt = config.crypt;
 	this.callbacks = {
 		onSuccess: this.handleSuccess,
 		onError: this.handleError
@@ -112,7 +115,6 @@ Fuzzer.prototype.send = function send(r, onSuccess, onError) {
 		}
 
 		logger.log("error", "Error: %j", error);
-
 		return self.callbacks.onError(error, response, body, self);
 	});
 }

@@ -1,3 +1,5 @@
+let axios = require('axios');
+
 var Workers = {
 	menuAction: function(elem) {
 		axios({

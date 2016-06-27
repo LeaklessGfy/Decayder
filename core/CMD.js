@@ -19,7 +19,7 @@ CMD.prototype.createCmd = function createCmd(cmd, r) {
 	let contexter = "", shellCmd;
 
 	if(this.context != null) {
-		contexter = "cd " + CMD.context + " && ";
+		contexter = "cd " + this.context + " && ";
 	}
 
 	shellCmd = contexter + cmd;
