@@ -71,12 +71,17 @@
     const Workers = require('./src/Workers');
 
     const EventListener = new EventEmitterInterface();
+    EventListener.on('event', () => {
+      console.log('an event occurred!');
+    });
+    //EventListener.emit('event');
 
     let CMD = null;
     let Fuzzer = null;
 
     logger.on('logging', function (transport, level, msg, meta) {
       //Handling log interface
+      console.log(meta);
     });
 
     require('./renderer.js')

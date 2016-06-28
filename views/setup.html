@@ -23,7 +23,7 @@
                     </select>
                 </div>
 
-                <div class="form-group" class="method-abstract">
+                <div class="form-group">
                     <label for="parameter">Parameter name (Dec by default)</label>
                     <input class="form-control" id="parameter" type="text" name="parameter">
                 </div>
@@ -45,12 +45,17 @@
                     </select>
                 </div>
 
-                <div class="form-group hidden" class="crypt-abstract">
+                <div class="form-group hidden crypt-abstract">
                     <label for="crypt-method">Crypt method</label>
                     <select class="form-control" id="crypt-method" name="crypt-method">
                         <option value="0">Default (Crypto.js AES)</option>
                         <option value="1">Custom</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="proxy">Local proxy</label>
+                    <input class="form-control" id="proxy" type="text" name="proxy">
                 </div>
 
                 <div class="form-group">

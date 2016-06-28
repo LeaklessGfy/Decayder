@@ -21,7 +21,8 @@ var Workers = {
 			method: form.get("method"),
 			parameter: form.get("parameter"),
 			crypt: form.get("crypt"),
-			shell: form.get("shell")
+			shell: form.get("shell"),
+			proxy: form.get("proxy")
 		};
 
 		if(typeof form.get("host") == undefined || !form.get("host")) {

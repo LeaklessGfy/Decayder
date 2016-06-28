@@ -24,7 +24,14 @@ function Fuzzer(config) {
 	};
 
 	this.httpMethod = this.getHttpMethod();
-	this.request = {};
+	this.request = {
+		url: this.host,
+		method: this.httpMethod,
+		headers: {},
+		form: {},
+		jar: {},
+		proxy: config.proxy
+	};
 }
 
 Fuzzer.prototype.getHandleback = function getHandleback() {
@@ -54,14 +61,8 @@ Fuzzer.prototype.getHttpMethod = function getHttpMethod() {
 	return "GET";
 }
 
-Fuzzer.prototype.forgeRequest = function forgeRequest(r) {
-	let request = {
-		url: this.host,
-		method: this.httpMethod,
-		headers: {},
-		form: {},
-		jar: {}
-	};
+Fuzzer.prototype.prepare = function prepare(r) {
+	let request = this.request;
 
 	request.headers["User-Agent"] = UserAgent.getRandom();
 	r = r + this.getHandleback();
@@ -90,9 +91,20 @@ Fuzzer.prototype.forgeRequest = function forgeRequest(r) {
 
 Fuzzer.prototype.send = function send(r, onSuccess, onError) {
 	var self = this;
-	this.request = this.forgeRequest(r);
 
-	logger.log("info", "Final request: %j", this.request, {});
+	if(typeof r === 'object') {
+		this.request = r;
+	}
+	else if(typeof r === 'string') {
+		this.request = this.prepare(r);
+	}
+	else {
+		logger.log("Error", "Request is not valid");
+		return;
+	}
+
+	logger.log("info", "Final request is set");
+	logger.log("info", "", this.request);
 
 	if(typeof onSuccess == "function") {
 		this.callbacks.onSuccess = onSuccess;
@@ -107,7 +119,7 @@ Fuzzer.prototype.send = function send(r, onSuccess, onError) {
 			logger.log("info", "Response(obj): ", response);
 			logger.log("info", "Response(body): ", body);
 
-			if(self.request.jar != {}) {
+			if(self.request.jar instanceof ApiCaller.jar) {
 				logger.log("info", "Response(cookies): ", self.request.jar.getCookies(self.host));
 			}
 

@@ -15,6 +15,8 @@ Workers.menuAction("setup");
 			delete Fuzzer;
 		}
 
+		$s.proxy = "http://127.0.0.1:8080";
+
 		Fuzzer = new FuzzerInterface($s);
 		CMD = new CMDInterface($s.shell);
 
@@ -31,9 +33,3 @@ Workers.menuAction("setup");
  gator(document).on('click', '.menu-item', function(e) {
 	Workers.menuAction(this.dataset.item);
  });
-
-EventListener.on('event', () => {
-  console.log('an event occurred!');
-});
-
-EventListener.emit('event');
