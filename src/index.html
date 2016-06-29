@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <title>Decayder</title>
-    <link rel="stylesheet" href="./res/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./res/css/right-bar.min.css">
-    <link rel="stylesheet" href="./res/css/style.css">
+    <link rel="stylesheet" href="./app/res/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./app/res/css/right-bar.min.css">
+    <link rel="stylesheet" href="./app/res/css/style.css">
   </head>
 
   <body class="main">
@@ -42,7 +42,7 @@
           <header>
             <div class="row">
               <div class="col-sm-12">
-                <img class="logo" src="./res/img/logo.png" alt="logo" width="200px">
+                <img class="logo" src="./app/res/img/logo.png" alt="logo" width="200px">
                 <hr>
               </div>
             </div>
@@ -57,33 +57,16 @@
   </body>
 
   <script>
-    const gator = require('gator');
-    const EventEmitterInterface = require('events');
+    const d = new Date();
+    const id = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + "T" + d.getHours() + "-" + d.getMinutes();
+
     const winston = require('winston');
     const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.Console)(),
-        new (winston.transports.File)({ json: true, prettyPrint: true, filename: 'log.log' })
+        new (winston.transports.File)({ json: false, prettyPrint: true, filename: './app/logs/log_' + id + '.log' })
       ]
     });
-    const CMDInterface = require('./core/CMD');
-    const FuzzerInterface = require('./core/Fuzzer');
-    const Workers = require('./src/Workers');
-
-    const EventListener = new EventEmitterInterface();
-    EventListener.on('event', () => {
-      console.log('an event occurred!');
-    });
-    //EventListener.emit('event');
-
-    let CMD = null;
-    let Fuzzer = null;
-
-    logger.on('logging', function (transport, level, msg, meta) {
-      //Handling log interface
-      console.log(meta);
-    });
-
-    require('./renderer.js')
+    require('./app/start-up.js')
   </script>
 </html>
