@@ -56,17 +56,9 @@
     </div>
   </body>
 
-  <script>
-    const d = new Date();
-    const id = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + "T" + d.getHours() + "-" + d.getMinutes();
+  <script src="./app/const.js"></script>
 
-    const winston = require('winston');
-    const logger = new (winston.Logger)({
-      transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.File)({ json: false, prettyPrint: true, filename: './app/logs/log_' + id + '.log' })
-      ]
-    });
+  <script>
     require('./app/start-up.js')
   </script>
 </html>

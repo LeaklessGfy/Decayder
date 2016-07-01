@@ -51,7 +51,7 @@ class CMD {
 		lsFolder = this.createCmd(lsFolder, "fo");
 		lsFile = this.createCmd(lsFile, "fi");
 
-		ls = lsFolder + lsFile + "$r=json_encode(array($fo, $fi));";
+		ls = lsFolder + lsFile + "$r=json_encode(array('folder' => urlencode($fo), 'files' => urlencode($fi)));";
 
 		return this.send(ls);
 	}

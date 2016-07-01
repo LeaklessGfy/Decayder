@@ -1,6 +1,6 @@
 const axios = require('axios');
-const CMDInterface = require('./../core/CMD');
-const FuzzerInterface = require('./../core/Fuzzer');
+const CMDInterface = require('./CMD');
+const FuzzerInterface = require('./Fuzzer');
 
 class AppService {
 	constructor() {
@@ -10,13 +10,17 @@ class AppService {
 		this.views_extension = ".html";
 	}
 
-	getPage(page) {
+	getPage(page, callback) {
 		axios({
 			method: 'get',
 			url: this.views_dir + page + this.views_extension
 		}).then(function(data) {
 			let content = document.getElementById('content');
 			content.innerHTML = data.data;
+
+			if(typeof callback == "function") {
+				callback();
+			}
 		}).catch(function() {
 			alert("error");
 			throw new Error("Page not found!");
@@ -36,7 +40,7 @@ class AppService {
 			this._CMD = new CMDInterface($s.shell);
 
 			let r = this._CMD.listDir("./");
-			this._Fuzzer.send(r);
+			return this._Fuzzer.send(r, {success:"listDir"});
 		}
 	}
 
@@ -48,7 +52,7 @@ class AppService {
 			parameter: form.get("parameter"),
 			crypt: form.get("crypt"),
 			shell: form.get("shell"),
-			proxy: form.get("proxy") || "http://127.0.0.1:8080"
+			proxy: form.get("proxy") //|| "http://127.0.0.1:8080"
 		};
 
 		if(typeof data.host == undefined || !data.host) {
@@ -68,6 +72,9 @@ class AppService {
 		return data;
 	}
 
+	finder(json) {
+		alert(json);
+	}
 }
 
 module.exports = AppService;

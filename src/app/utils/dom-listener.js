@@ -1,6 +1,4 @@
 const gator = require('gator');
-const AppServiceInterface = require('./app-service');
-const AppService = new AppServiceInterface();
 
 /*
  * DOM Event Listener
@@ -15,6 +13,7 @@ const AppService = new AppServiceInterface();
 
  gator(document).on('click', '#setup-generate-decoy', function(e) {
 	e.preventDefault();
+	EventListener.emit("event", "1");
 	alert("Will generate php file");
  });
 

@@ -26,13 +26,15 @@ class Fuzzer {
 
 		let httpMethod = this.getHttpMethod();
 		this._config = {
-			url: this.host,
+			url: this._host,
 			method: httpMethod,
 			headers: {},
 			form: {},
 			jar: {},
 			proxy: config.proxy || null
 		};
+
+		this._buffer = "";
 	}
 
 	/**
@@ -106,7 +108,7 @@ class Fuzzer {
 	/**
 	 * Send request
 	 */
-	send(request, onSuccess, onError) {
+	send(request, callBag, onSuccess, onError) {
 		var self = this;
 
 		if(typeof request === 'object') {
@@ -128,29 +130,62 @@ class Fuzzer {
 			this._callbacks.onError = onError;
 		}
 
-		ApiCaller(this._config, function(error, response, body) {
+		if(typeof callBag != "object") {
+			callBag = {success: null, error: null};
+		}
+
+		return ApiCaller(this._config, function(error, response, body) {
 			if(!error && response.statusCode == 200) {
 				logger.log("info", "INFO - Response: \n %s \n ", response);
 				logger.log("info", "INFO - Body: \n %s \n ", body);
 
 				if(self._config.jar instanceof ApiCaller.jar) {
-					logger.log("info", "INFO - Cookies: \n %s \n ", self._config.jar.getCookies(self._host));
+					logger.log("info", "INFO - Cookies: \n %s \n ", self._config.jar.getCookies(self._host), {});
 				}
 
-				return self._callbacks.onSuccess(response, body, self);
+				return self._callbacks.onSuccess(response, body, self, callBag.success);
 			}
 
-			logger.log("error", "ERROR - Error: \n %j \n", error);
-			return self._callbacks.onError(error, response, body, self);
+			logger.log("error", "ERROR - Error: \n %j \n", error, {});
+			return self._callbacks.onError(error, response, body, self, callBag.error);
 		});
 	}
 
-	handleSuccess(response, body, ref) {
+	handleSuccess(response, body, ref, event) {
+		let buffer = "Not found!";
 
+		switch(ref._method) {
+			case 0: //GET
+				buffer = body;
+				break;
+			case 1: //POST
+				buffer = body;
+				break;
+			case 2: //Header
+				console.log(response);
+				buffer = response;
+				break;
+			case 3: //Cookie
+				let cookies = ref._config.jar.getCookies(ref._host);
+				let lgt = cookies.length;
+
+				let raw = {};
+				for(var i = 0; i < lgt; i++) {
+					if(cookies[i].key === ref._parameter) {
+						raw = cookies[i].value;
+					}
+				}
+				buffer = JSON.parse(decodeURIComponent(raw));
+				break;
+		}
+
+		ref._buffer = buffer;
+		logger.log("info", "INFO - Buffer: \n" + buffer);
+
+		EventListener.emit(event, buffer);
 	}
 
 	handleError(error, response, body, ref) {
-
 	}
 }
 
