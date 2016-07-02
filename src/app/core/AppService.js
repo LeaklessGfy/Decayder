@@ -1,6 +1,7 @@
 const axios = require('axios');
 const CMDInterface = require('./CMD');
 const FuzzerInterface = require('./Fuzzer');
+const DomHandlerInterface = require('./../utils/dom-handler');
 
 class AppService {
 	constructor() {
@@ -8,6 +9,7 @@ class AppService {
 		this._CMD = null;
 		this.views_dir = `${__dirname}` + "/../res/views/";
 		this.views_extension = ".html";
+		this._DomHandler = new DomHandlerInterface();
 	}
 
 	getPage(page, callback) {
@@ -47,7 +49,7 @@ class AppService {
 	getConfig(form) {
 		let error = [];
 		let data = {
-			host: form.get("host") || "http://localhost/decayder.php",
+			host: form.get("host") || "http://localhost/hack.php",
 			method: form.get("method"),
 			parameter: form.get("parameter"),
 			crypt: form.get("crypt"),
@@ -72,8 +74,24 @@ class AppService {
 		return data;
 	}
 
-	finder(json) {
-		alert(json);
+	finder(data) {
+		let rawFolders = data[0];
+		let rawFiles = decodeURIComponent(data[1]);
+
+		let folders = rawFolders.split('%2F%0A');
+		let files = rawFiles.split('%2F%0A');
+		folders.splice(-1,1);
+
+		let doc = document.getElementById('site-map').getElementsByTagName('tbody')[0];
+
+		for(let folder of folders) {
+			let ligne = this._DomHandler.createLigne(folder, 0);
+			doc.appendChild(ligne);
+		}
+
+		for(let file of files) {
+
+		}
 	}
 }
 

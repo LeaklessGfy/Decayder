@@ -45,13 +45,13 @@ class CMD {
 			context = "cd " + dir + " && ";
 		}
 
-		lsFolder = context + "ls -d */";
+		lsFolder = context + "ls -ld */";
 		lsFile = context + "find . -maxdepth 1 -type f";
 
 		lsFolder = this.createCmd(lsFolder, "fo");
 		lsFile = this.createCmd(lsFile, "fi");
 
-		ls = lsFolder + lsFile + "$r=json_encode(array('folder' => urlencode($fo), 'files' => urlencode($fi)));";
+		ls = lsFolder + lsFile + "$r=json_encode(array(urlencode($fo), urlencode($fi)));";
 
 		return this.send(ls);
 	}

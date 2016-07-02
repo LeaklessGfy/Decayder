@@ -46,13 +46,13 @@ class Fuzzer {
 		switch(this._method) {
 			case 0:
 			case 1:
-				response = "exit(echo($r));";
+				response = "echo($r);exit();";
 				break;
 			case 2: 
-				response = "header('" + this._parameter + ":' . $r);";
+				response = "header('" + this._parameter + ":' . $r);exit();";
 				break;
 			case 3:
-				response = "setcookie('" + this._parameter + "', $r);";
+				response = "setcookie('" + this._parameter + "', $r);exit();";
 				break;
 		}
 
@@ -156,14 +156,14 @@ class Fuzzer {
 
 		switch(ref._method) {
 			case 0: //GET
-				buffer = body;
+				buffer = JSON.parse(body);
 				break;
 			case 1: //POST
-				buffer = body;
+				buffer = JSON.parse(body);
 				break;
 			case 2: //Header
-				console.log(response);
-				buffer = response;
+				let header = response.headers[ref._parameter.toLowerCase()];
+				buffer = JSON.parse(header);
 				break;
 			case 3: //Cookie
 				let cookies = ref._config.jar.getCookies(ref._host);
@@ -175,6 +175,7 @@ class Fuzzer {
 						raw = cookies[i].value;
 					}
 				}
+
 				buffer = JSON.parse(decodeURIComponent(raw));
 				break;
 		}
