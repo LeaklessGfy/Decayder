@@ -1,3 +1,6 @@
+/**
+ * @author LeakLessGfy
+ */
 class DomHandler {
 	construct() {}
 
@@ -23,6 +26,9 @@ class DomHandler {
 			hExtension.innerHTML = "Folder";
 			return hExtension;
 		}
+
+		let name = arr[arr.length - 1];
+		hExtension.innerHTML = name.split('.').pop();
 
 		return hExtension;
 	}

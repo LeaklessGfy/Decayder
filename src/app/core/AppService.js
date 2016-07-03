@@ -3,6 +3,9 @@ const CMDInterface = require('./CMD');
 const FuzzerInterface = require('./Fuzzer');
 const DomHandlerInterface = require('./../utils/dom-handler');
 
+/**
+ * @author LeakLessGfy
+ */
 class AppService {
 	constructor() {
 		this._Fuzzer = null;
@@ -20,12 +23,21 @@ class AppService {
 			let content = document.getElementById('content');
 			content.innerHTML = data.data;
 
+			let nav = document.getElementById('bs-example-navbar-collapse-1').getElementsByTagName('li');
+			for(let a of nav) {
+				a.className = "";
+			}
+
+			let active = document.querySelectorAll('[data-item="' + page + '"]')[0];
+			active.parentNode.className = "active";
+
 			if(typeof callback == "function") {
 				callback();
 			}
-		}).catch(function() {
+		}).catch(function(e) {
 			alert("error");
-			throw new Error("Page not found!");
+
+			throw new Error(e);
 		});
 	}
 
@@ -76,11 +88,16 @@ class AppService {
 
 	finder(data) {
 		let rawFolders = data[0];
-		let rawFiles = decodeURIComponent(data[1]);
+		let rawFiles = data[1];
 
+		//Get proper buffer array
 		let folders = rawFolders.split('%2F%0A');
-		let files = rawFiles.split('%2F%0A');
+		let files = rawFiles.split('%0A');
+
+		//Delete uncessary buffer
 		folders.splice(-1,1);
+		files.splice(-1,1);
+		files.splice(0, 1);
 
 		let doc = document.getElementById('site-map').getElementsByTagName('tbody')[0];
 
@@ -89,8 +106,10 @@ class AppService {
 			doc.appendChild(ligne);
 		}
 
+		console.log(files);
 		for(let file of files) {
-
+			let ligne = this._DomHandler.createLigne(file, 1);
+			doc.appendChild(ligne);
 		}
 	}
 }

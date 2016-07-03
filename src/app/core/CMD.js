@@ -1,4 +1,6 @@
-
+/**
+ * @author LeakLessGfy
+ */
 class CMD {
 	constructor(method, context) {
 		this._method = parseInt(method);
@@ -46,7 +48,7 @@ class CMD {
 		}
 
 		lsFolder = context + "ls -ld */";
-		lsFile = context + "find . -maxdepth 1 -type f";
+		lsFile = context + "ls -lp | grep -v /"; //"find . -maxdepth 1 -type f" (sometimes more accurate)
 
 		lsFolder = this.createCmd(lsFolder, "fo");
 		lsFile = this.createCmd(lsFile, "fi");
@@ -71,6 +73,7 @@ class CMD {
 
 	send(cmd) {
 		logger.log("info", "FINISH - Building new request: \n %s \n", cmd);
+
 		return cmd;
 	}
 }

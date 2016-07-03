@@ -2,6 +2,7 @@ let ApiCaller = require('request');
 let UserAgent = require('random-useragent');
 
 /*
+ * @author LeakLessGfy
  * @param {object} config = configuration of Fuzzer
  *
  * @config_param string Host = target URL
