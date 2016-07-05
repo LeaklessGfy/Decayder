@@ -8,11 +8,10 @@ const DomHandlerInterface = require('./../utils/dom-handler');
  */
 class AppService {
 	constructor() {
-		this._Fuzzer = null;
-		this._CMD = null;
+		this.Fuzzer = null;
+		this.CMD = null;
 		this.views_dir = `${__dirname}` + "/../res/views/";
 		this.views_extension = ".html";
-		this._DomHandler = new DomHandlerInterface();
 	}
 
 	getPage(page, callback) {
@@ -41,20 +40,22 @@ class AppService {
 		});
 	}
 
-	initSetup(form) {
+	initSetup() {
+		let form = new FormData(document.getElementById("setup-form"));
 		let $s = this.getConfig(form);
 
 		if($s) {
-			if(this._CMD != null || this._Fuzzer != null) {
-				delete this._CMD;
-				delete this._Fuzzer;
+			if(this.CMD != null || this.Fuzzer != null) {
+				delete this.CMD;
+				delete this.Fuzzer;
 			}
 
-			this._Fuzzer = new FuzzerInterface($s);
-			this._CMD = new CMDInterface($s.shell);
+			this.Fuzzer = new FuzzerInterface($s);
+			this.CMD = new CMDInterface($s.shell);
 
-			let r = this._CMD.listDir("./");
-			return this._Fuzzer.send(r, {success:"listDir"});
+			let r = this.CMD.listDir("./");
+			return this.Fuzzer.send(r).then(this.getPage("finder")).then(this.finder);
+			//return this.Fuzzer.send(r, {success:"listDir"});
 		}
 	}
 
@@ -87,6 +88,10 @@ class AppService {
 	}
 
 	finder(data) {
+		//Bit tricky here
+		data = JSON.parse(decodeURIComponent(data));
+		console.log(data);
+
 		let rawFolders = data[0];
 		let rawFiles = data[1];
 
@@ -94,21 +99,22 @@ class AppService {
 		let folders = rawFolders.split('%2F%0A');
 		let files = rawFiles.split('%0A');
 
-		//Delete uncessary buffer
+		//Delete uncessary buffers
 		folders.splice(-1,1);
 		files.splice(-1,1);
 		files.splice(0, 1);
 
 		let doc = document.getElementById('site-map').getElementsByTagName('tbody')[0];
+		let domHandler = new DomHandlerInterface();
 
 		for(let folder of folders) {
-			let ligne = this._DomHandler.createLigne(folder, 0);
+			let ligne = domHandler.createLigne(folder, 0);
 			doc.appendChild(ligne);
 		}
 
 		console.log(files);
 		for(let file of files) {
-			let ligne = this._DomHandler.createLigne(file, 1);
+			let ligne = domHandler.createLigne(file, 1);
 			doc.appendChild(ligne);
 		}
 	}

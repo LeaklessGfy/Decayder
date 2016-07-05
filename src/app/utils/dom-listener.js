@@ -7,14 +7,13 @@ const gator = require('gator');
 
  gator(document).on('click', '#setup-submit', function(e) {
 	e.preventDefault();
-	form = new FormData(document.getElementById("setup-form"));
-	AppService.initSetup(form);
+	AppService.initSetup();
  });
 
  gator(document).on('click', '#setup-generate-decoy', function(e) {
 	e.preventDefault();
-	EventListener.emit("event", "1");
-	alert("Will generate php file");
+	//EventListener.emit("event", "1");
+	//alert("Will generate php file");
  });
 
  gator(document).on('click', '.menu-item', function(e) {

