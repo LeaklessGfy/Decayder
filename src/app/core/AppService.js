@@ -10,20 +10,21 @@ class AppService {
 	constructor() {
 		this.Fuzzer = null;
 		this.CMD = null;
-		this.views_dir = `${__dirname}` + "/../res/views/";
-		this.views_extension = ".html";
 	}
 
 	getPage(page, callback) {
+		let viewsDirectory = `${__dirname}` + '/../res/views/';
+		let viewsExtension = '.html';
+
 		axios({
 			method: 'get',
-			url: this.views_dir + page + this.views_extension
+			url: viewsDirectory + page + viewsExtension
 		}).then(function(data) {
 			let content = document.getElementById('content');
 			content.innerHTML = data.data;
 
-			let nav = document.getElementById('bs-example-navbar-collapse-1').getElementsByTagName('li');
-			for(let a of nav) {
+			let navs = document.getElementById('bs-example-navbar-collapse-1').getElementsByTagName('li');
+			for(let a of navs) {
 				a.className = "";
 			}
 
@@ -35,7 +36,6 @@ class AppService {
 			}
 		}).catch(function(e) {
 			alert("error");
-
 			throw new Error(e);
 		});
 	}
@@ -54,8 +54,9 @@ class AppService {
 			this.CMD = new CMDInterface($s.shell);
 
 			let r = this.CMD.listDir("./");
-			return this.Fuzzer.send(r).then(this.getPage("finder")).then(this.finder);
-			//return this.Fuzzer.send(r, {success:"listDir"});
+			return this.Fuzzer.send(r)
+							.then(this.getPage("finder"))
+							.then(this.finder);
 		}
 	}
 
@@ -80,7 +81,6 @@ class AppService {
 
 		if(error.length > 0) {
 			alert("Fields are missing!");
-
 			throw new Error("Fields are missing!");
 		}
 
